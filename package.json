@@ -1,0 +1,38 @@
+{
+  "name": "xtreamly_sdk",
+  "version": "1.0.9",
+  "description": "Allows DApps to easily communicate with Xtreamly backend",
+  "module": "index",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xtreamly-Team/porxy_account_manager_canister.git"
+  },
+  "keywords": [
+    "xtreamly",
+    "icp",
+    "blockchain",
+    "api",
+    "sdk",
+    "typescript",
+    "evm",
+    "ethereum",
+    "auth"
+  ],
+  "author": "Xtreamly Co",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Xtreamly-Team/porxy_account_manager_canister/issues"
+  },
+  "homepage": "https://github.com/Xtreamly-Team/porxy_account_manager_canister#readme",
+  "dependencies": {
+    "@dfinity/agent": "^0.15.6",
+    "@dfinity/identity-secp256k1": "^0.15.6",
+    "ethers": "^6.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
