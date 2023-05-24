@@ -10,7 +10,8 @@ export class VCModel {
     data: string;
     issuer: string;
 
-    constructor(raw_string: string, vc: string, proof: string, did: string, data: string, issuer: string) {
+    constructor(
+        raw_string: string, vc: string, proof: string, did: string, data: string, issuer: string) {
         this.raw_string = raw_string;
         this.vc = vc;
         this.proof = proof;

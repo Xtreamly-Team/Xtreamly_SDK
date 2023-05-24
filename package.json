@@ -1,6 +1,6 @@
 {
   "name": "xtreamly_sdk",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "Allows DApps to easily communicate with Xtreamly backend",
   "module": "index",
   "scripts": {
