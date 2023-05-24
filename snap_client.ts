@@ -10,7 +10,7 @@ export type Snap = {
 };
 
 // TODO: Make sure user has installed Metamask Flask
-export class SnapHandler {
+export class SnapClient {
     connectedSnapOrigin: string = ''
     connectedSnapParams: Record<'version' | string, unknown> = {}
 
