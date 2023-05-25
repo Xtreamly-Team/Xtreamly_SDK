@@ -1,7 +1,8 @@
 import { createActor, createAgent, HttpAgent } from "./icp_utilities";
+import { EVMHandler } from "./evm_handler";
+import { deployVCContract } from "../../web3_utils/ethereum/ethereum_call";
 
 // TODO: Add proper error handling
-
 export class VCModel {
     raw_string: string;
     vc: string;
@@ -32,6 +33,11 @@ export class VCModel {
 }
 
 export class AuthHandler {
+    evmHandler: EVMHandler
+
+    constructor(evmHandler: EVMHandler) {
+        this.evmHandler = evmHandler
+    }
     // This is used by DApps that want user to save data as VC
     async createSelfPresentedVCModel(
         host: string,
@@ -58,16 +64,32 @@ export class AuthHandler {
         const vc_raw = vc_proof_pair[0];
         const proof_raw = vc_proof_pair[1];
 
-        const vc = JSON.parse(vc_raw);
+        const vc_raw_jsoned = JSON.parse(vc_raw);
         const proof = JSON.parse(proof_raw);
 
         const did = proof["verification_method"];
 
-        const data = vc["credential_subject"]["data"];
-        const issuer = vc["issuer"];
+        const data = vc_raw_jsoned["credential_subject"]["data"];
+        const issuer = vc_raw_jsoned["issuer"];
 
-        return new VCModel(res, vc, proof, did, data, issuer);
+        const vc = new VCModel(res, vc_raw, proof, did, data, issuer);
+
+        console.log(vc)
+
+        return vc
     };
+
+    async deployVCToEVM(vc: VCModel) {
+        const deployedContract = await this.evmHandler.deployVCContract(
+            vc.did,
+            vc.data,
+            vc.issuer,
+            'SUBJECT',
+        )
+        console.log(deployedContract)
+        return await deployedContract.getAddress();
+    }
+
 
     // This is used by DApps that want user to save data as VC
     async informCanisterAboutDeployedVCContract(
