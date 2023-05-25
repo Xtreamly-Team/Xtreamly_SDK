@@ -9,15 +9,23 @@ export type Snap = {
     initialPermissions: Record<string, unknown>;
 };
 
+export type ConnectedSnap = {
+    blocked: boolean;
+    enabled: boolean;
+    id: string;
+    version: string;
+    initialPermissions: Record<string, unknown>;
+}
+
+
 // TODO: Make sure user has installed Metamask Flask
 export class SnapClient {
-    connectedSnapOrigin: string = ''
-    connectedSnapParams: Record<'version' | string, unknown> = {}
+    connectedSnaps: ConnectedSnap[] = []
 
     constructor(
     ) {
         if (!window.ethereum) {
-            throw ReferenceError();
+            throw Error('Need to have metamask installed');
         }
     }
     /**
@@ -41,12 +49,18 @@ export class SnapClient {
         origin: string = defaultSnapOrigin,
         params: Record<'version' | string, unknown> = {},
     ) => {
-        await window.ethereum.request({
+        let res = await window.ethereum.request({
             method: 'wallet_requestSnaps',
             params: {
                 [origin]: params,
             },
         });
+        const snapOrigin: string = Object.keys(res)[0]
+        const snapObject: ConnectedSnap = Object.values(res)[0] as ConnectedSnap
+        console.log(snapOrigin)
+        console.log(snapObject)
+        this.connectedSnaps.push(snapObject);
+        console.log(this.connectedSnaps);
     };
 
     /**
@@ -78,10 +92,20 @@ export class SnapClient {
     invokeSnap = async (method: string) => {
         let res = await window.ethereum.request({
             method: 'wallet_invokeSnap',
-            params: { snapId: this.connectedSnapOrigin, request: { method: method } },
+            params: { snapId: this.connectedSnaps[0]['id'], request: { method: method } },
         });
         return res;
     };
+
+    invokeSpecificSnap = async (snapOrigin: string, method: string) => {
+        let res = await window.ethereum.request({
+            method: 'wallet_invokeSnap',
+            params: { snapId: snapOrigin, request: { method: method } },
+        });
+        return res;
+    };
+
+
 
     isLocalSnap = (snapId: string) => snapId.startsWith('local:');
 }
