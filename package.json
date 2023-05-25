@@ -1,6 +1,6 @@
 {
   "name": "xtreamly_sdk",
-  "version": "1.2.0",
+  "version": "1.2.5",
   "description": "Allows DApps to easily communicate with Xtreamly backend",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -32,7 +32,10 @@
   "dependencies": {
     "@dfinity/agent": "^0.15.6",
     "@dfinity/identity-secp256k1": "^0.15.6",
-    "ethers": "^6.4.0"
+    "@dfinity/candid": "^0.15.6",
+    "@dfinity/principal": "^0.15.6",
+    "@types/node": "^20.2.3",
+    "ethers": "5.7.2"
   },
   "publishConfig": {
     "access": "public"
