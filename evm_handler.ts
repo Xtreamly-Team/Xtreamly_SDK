@@ -1,10 +1,12 @@
 import { Contract, ContractFactory } from "ethers";
-import { ethers, providers } from "ethers";
-export { parseUnits, Contract } from "ethers";
+import { ethers} from "ethers";
+export { Contract } from "ethers";
+
+export const parseUnits = ethers.utils.parseUnits;
 
 import ERC20 from "./ERC20.json";
 import { VCSmartContractABI, VCSmartContractByteCode } from "./VC_SmartContracter_Bin";
-import { BaseContract } from "ethers/src.ts/contract";
+import { BaseContract } from "ethers";
 
 type Web3Provider = ethers.providers.Web3Provider;
 type JsonRpcSigner = ethers.providers.JsonRpcSigner;
