@@ -46,12 +46,18 @@ export class AuthHandler {
         canisterId: string,
         selfPresentedData: string,
     ) {
+  //   let idlFactory = ({ IDL }) => {
+  //     return IDL.Service({
+  //       create_new_proxy_account: IDL.Func([IDL.Text], [IDL.Text], []),
+  //     });
+  //   };
+  //   let actor = await createActor(idlFactory, canisterId, this.agent);
         let idlFactory = ({ IDL }) =>
             IDL.Service({
                 create_vc_self_presented: IDL.Func([IDL.Text], [IDL.Text], []),
             });
         let agent = await createAgent(host, null, this.m_fetch);
-        let actor = createActor(agent, canisterId, idlFactory);
+        let actor = createActor(idlFactory, canisterId, agent);
 
         let res = ''
         try {
@@ -106,7 +112,7 @@ export class AuthHandler {
             });
         };
         let agent = await createAgent(host, null, this.m_fetch);
-        let actor = createActor(agent, canisterId, idlFactory);
+        let actor = createActor(idlFactory, canisterId, agent);
         let res = ''
         try {
             res = `${await actor.present_did_address(did, contractAddress)}`
@@ -136,7 +142,7 @@ export class AuthHandler {
             });
         };
         let agent = await createAgent(host, null, this.m_fetch);
-        let actor = createActor(agent, canisterId, idlFactory);
+        let actor = createActor(idlFactory, canisterId, agent);
 
         let res = ''
 
@@ -153,6 +159,46 @@ export class AuthHandler {
 
         return res;
     }
+
+
+  // initialize = async (): Promise<HttpAgent> => {
+  //   if (this.agent) {
+  //     return this.agent;
+  //   }
+  //   const custom_fetch = this.is_snap ? fetch : null;
+  //   this.agent = await createAgent(this.host, null, custom_fetch);
+  //   // this.agent = new HttpAgent({ host: this.host });
+  //   // let rootKey = await this.agent.fetchRootKey();
+  //   return this.agent;
+  // };
+  //
+  // callCanisterCreateProxyAccount = async (
+  //   canisterId: string,
+  //   publicKey: string
+  // ) => {
+  //   console.log(`Sending create proxy account request for
+  // ${publicKey}`);
+  //   let idlFactory = ({ IDL }) => {
+  //     return IDL.Service({
+  //       create_new_proxy_account: IDL.Func([IDL.Text], [IDL.Text], []),
+  //     });
+  //   };
+  //   let actor = await createActor(idlFactory, canisterId, this.agent);
+  //
+  //   try {
+  //     let res = await actor.create_new_proxy_account(publicKey);
+  //     [this.proxyToken, this.proxyPublicKey] = (res as string).split(",");
+  //     this.proxyPublicKey = `0x${this.proxyPublicKey}`;
+  //     console.log(`Returned response:
+  //   public key: ${this.proxyPublicKey},
+  //   token: ${this.proxyToken}`);
+  //     return [this.proxyToken, this.proxyPublicKey];
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  //
+  //   return "Some Error";
+  // };
 
 }
 
