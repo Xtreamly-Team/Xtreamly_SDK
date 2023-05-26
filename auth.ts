@@ -33,44 +33,81 @@ export class VCModel {
 }
 
 export class AuthHandler {
+    // WARN: This should be initialized?
     evmHandler: EVMHandler
-    m_fetch: null | ((input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>);
+    host: string = "";
+    is_snap = false;
+    agent: HttpAgent | null = null;
 
-    constructor(evmHandler: EVMHandler, m_fetch = null) {
+    constructor(evmHandler: EVMHandler, host: string, is_snap: boolean = false) {
         this.evmHandler = evmHandler
-        this.m_fetch = m_fetch
+        this.host = host
+        this.is_snap = is_snap
     }
+
+    // You won't need to use the returned HTTPAgent.
+    initialize = async (): Promise<HttpAgent> => {
+        if (this.agent) {
+            return this.agent;
+        }
+        const custom_fetch = this.is_snap ? fetch : null;
+        this.agent = await createAgent(this.host, null, custom_fetch);
+        // this.agent = new HttpAgent({ host: this.host });
+        // let rootKey = await this.agent.fetchRootKey();
+        return this.agent;
+    };
+
+    // async createAgent(
+    //     host: string,
+    //     fetch
+    // ) {
+    //     if (fetch) {
+    //         return await createAgent(host, null, fetch);
+    //     } else {
+    //         return await createAgent(host, null, null);
+    //     }
+    // }
+
+    // async createActor(
+    //     canisterId: string,
+    //     agent,
+    // ) {
+    //     let idlFactory = ({ IDL }) =>
+    //         IDL.Service({
+    //             create_vc_self_presented: IDL.Func([IDL.Text], [IDL.Text], []),
+    //         });
+    //     let actor = createActor(idlFactory, canisterId, agent);
+    //     return actor;
+    // }
+
     // This is used by DApps that want user to save data as VC
     async createSelfPresentedVCModel(
-        host: string,
         canisterId: string,
         selfPresentedData: string,
     ) {
-  //   let idlFactory = ({ IDL }) => {
-  //     return IDL.Service({
-  //       create_new_proxy_account: IDL.Func([IDL.Text], [IDL.Text], []),
-  //     });
-  //   };
-  //   let actor = await createActor(idlFactory, canisterId, this.agent);
+        console.log(`Sending self presented data to canister
+  ${selfPresentedData}`);
         let idlFactory = ({ IDL }) =>
             IDL.Service({
                 create_vc_self_presented: IDL.Func([IDL.Text], [IDL.Text], []),
             });
-        let agent = await createAgent(host, null, this.m_fetch);
-        let actor = createActor(idlFactory, canisterId, agent);
+        let actor = createActor(idlFactory, canisterId, this.agent);
 
         let res = ''
         try {
             res = `${await actor.create_vc_self_presented(
                 selfPresentedData,
             )}`;
-        } catch {
+            console.log(`Returned raw self presented VC from canister
+  ${res}`);
+        } catch (e) {
+            console.error(e);
         }
 
         const vc_proof_pair = res.split("\n");
 
-        const vc_raw = vc_proof_pair[0];
-        const proof_raw = vc_proof_pair[1];
+        const vc_raw = vc_proof_pair[0] as string;
+        const proof_raw = vc_proof_pair[1] as string;
 
         const vc_raw_jsoned = JSON.parse(vc_raw);
         const proof = JSON.parse(proof_raw);
@@ -101,24 +138,22 @@ export class AuthHandler {
 
     // This is used by DApps that want user to save data as VC
     async informCanisterAboutDeployedVCContract(
-        host: string,
         canisterId: string,
         did: string,
         contractAddress: string
     ) {
+        console.log(`Sending deployed vc contract address to canister ${contractAddress} and did: ${did}`);
         const idlFactory = ({ IDL }) => {
             return IDL.Service({
                 present_did_address: IDL.Func([IDL.Text, IDL.Text], [IDL.Text], []),
             });
         };
-        let agent = await createAgent(host, null, this.m_fetch);
-        let actor = createActor(idlFactory, canisterId, agent);
+        let actor = createActor(idlFactory, canisterId, this.agent);
         let res = ''
         try {
             res = `${await actor.present_did_address(did, contractAddress)}`
-        } catch {
-            // Won't do anything here since the error is not related to us, its related
-            // to snap not being able to verify certificate
+        } catch (e) {
+            console.error(e);
         }
 
         return res
@@ -161,44 +196,44 @@ export class AuthHandler {
     }
 
 
-  // initialize = async (): Promise<HttpAgent> => {
-  //   if (this.agent) {
-  //     return this.agent;
-  //   }
-  //   const custom_fetch = this.is_snap ? fetch : null;
-  //   this.agent = await createAgent(this.host, null, custom_fetch);
-  //   // this.agent = new HttpAgent({ host: this.host });
-  //   // let rootKey = await this.agent.fetchRootKey();
-  //   return this.agent;
-  // };
-  //
-  // callCanisterCreateProxyAccount = async (
-  //   canisterId: string,
-  //   publicKey: string
-  // ) => {
-  //   console.log(`Sending create proxy account request for
-  // ${publicKey}`);
-  //   let idlFactory = ({ IDL }) => {
-  //     return IDL.Service({
-  //       create_new_proxy_account: IDL.Func([IDL.Text], [IDL.Text], []),
-  //     });
-  //   };
-  //   let actor = await createActor(idlFactory, canisterId, this.agent);
-  //
-  //   try {
-  //     let res = await actor.create_new_proxy_account(publicKey);
-  //     [this.proxyToken, this.proxyPublicKey] = (res as string).split(",");
-  //     this.proxyPublicKey = `0x${this.proxyPublicKey}`;
-  //     console.log(`Returned response:
-  //   public key: ${this.proxyPublicKey},
-  //   token: ${this.proxyToken}`);
-  //     return [this.proxyToken, this.proxyPublicKey];
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  //
-  //   return "Some Error";
-  // };
+    // initialize = async (): Promise<HttpAgent> => {
+    //   if (this.agent) {
+    //     return this.agent;
+    //   }
+    //   const custom_fetch = this.is_snap ? fetch : null;
+    //   this.agent = await createAgent(this.host, null, custom_fetch);
+    //   // this.agent = new HttpAgent({ host: this.host });
+    //   // let rootKey = await this.agent.fetchRootKey();
+    //   return this.agent;
+    // };
+    //
+    // callCanisterCreateProxyAccount = async (
+    //   canisterId: string,
+    //   publicKey: string
+    // ) => {
+    //   console.log(`Sending create proxy account request for
+    // ${publicKey}`);
+    //   let idlFactory = ({ IDL }) => {
+    //     return IDL.Service({
+    //       create_new_proxy_account: IDL.Func([IDL.Text], [IDL.Text], []),
+    //     });
+    //   };
+    //   let actor = await createActor(idlFactory, canisterId, this.agent);
+    //
+    //   try {
+    //     let res = await actor.create_new_proxy_account(publicKey);
+    //     [this.proxyToken, this.proxyPublicKey] = (res as string).split(",");
+    //     this.proxyPublicKey = `0x${this.proxyPublicKey}`;
+    //     console.log(`Returned response:
+    //   public key: ${this.proxyPublicKey},
+    //   token: ${this.proxyToken}`);
+    //     return [this.proxyToken, this.proxyPublicKey];
+    //   } catch (e) {
+    //     console.error(e);
+    //   }
+    //
+    //   return "Some Error";
+    // };
 
 }
 
