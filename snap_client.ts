@@ -55,10 +55,8 @@ export class SnapClient {
                 [origin]: params,
             },
         });
-        const snapOrigin: string = Object.keys(res)[0]
+        // const snapOrigin: string = Object.keys(res)[0]
         const snapObject: ConnectedSnap = Object.values(res)[0] as ConnectedSnap
-        console.log(snapOrigin)
-        console.log(snapObject)
         this.connectedSnaps.push(snapObject);
         console.log(this.connectedSnaps);
     };

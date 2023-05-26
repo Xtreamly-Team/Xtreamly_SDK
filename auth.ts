@@ -34,9 +34,11 @@ export class VCModel {
 
 export class AuthHandler {
     evmHandler: EVMHandler
+    m_fetch: null | ((input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>);
 
-    constructor(evmHandler: EVMHandler) {
+    constructor(evmHandler: EVMHandler, m_fetch = null) {
         this.evmHandler = evmHandler
+        this.m_fetch = m_fetch
     }
     // This is used by DApps that want user to save data as VC
     async createSelfPresentedVCModel(
@@ -48,7 +50,7 @@ export class AuthHandler {
             IDL.Service({
                 create_vc_self_presented: IDL.Func([IDL.Text], [IDL.Text], []),
             });
-        let agent = await createAgent(host, null, fetch)
+        let agent = await createAgent(host, null, this.m_fetch);
         let actor = createActor(agent, canisterId, idlFactory);
 
         let res = ''
@@ -103,7 +105,7 @@ export class AuthHandler {
                 present_did_address: IDL.Func([IDL.Text, IDL.Text], [IDL.Text], []),
             });
         };
-        let agent = await createAgent(host, null, fetch)
+        let agent = await createAgent(host, null, this.m_fetch);
         let actor = createActor(agent, canisterId, idlFactory);
         let res = ''
         try {
@@ -133,7 +135,7 @@ export class AuthHandler {
                 ),
             });
         };
-        let agent = await createAgent(host, null, fetch)
+        let agent = await createAgent(host, null, this.m_fetch);
         let actor = createActor(agent, canisterId, idlFactory);
 
         let res = ''
