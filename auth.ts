@@ -145,18 +145,20 @@ export class AuthHandler {
         console.log(`Sending deployed vc contract address to canister ${contractAddress} and did: ${did}`);
         const idlFactory = ({ IDL }) => {
             return IDL.Service({
-                present_did_address: IDL.Func([IDL.Text, IDL.Text], [IDL.Text], []),
+                present_did_address: IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], []),
             });
         };
         let actor = createActor(idlFactory, canisterId, this.agent);
-        let res = ''
         try {
-            res = `${await actor.present_did_address(did, contractAddress)}`
+            let res = await actor.present_did_address(did, contractAddress)
+
+            console.log(`Returned inform canister about deployed VC contract
+  ${res}`);
+            return res
         } catch (e) {
             console.error(e);
         }
 
-        return res
     };
 
     // This is used by DApps that only want to ask data to authenticate users
