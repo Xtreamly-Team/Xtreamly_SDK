@@ -1,6 +1,6 @@
 import { createActor, createAgent, HttpAgent } from "./icp_utilities";
-import { EVMHandler } from "./evm_handler";
-import { deployVCContract } from "../../web3_utils/ethereum/ethereum_call";
+import { EVMHandlerV5 } from "./evm_handler";
+import { BaseContract } from "ethers";
 
 // TODO: Add proper error handling
 export class VCModel {
@@ -34,12 +34,12 @@ export class VCModel {
 
 export class AuthHandler {
     // WARN: This should be initialized?
-    evmHandler: EVMHandler
+    evmHandler: EVMHandlerV5
     host: string = "";
     is_snap = false;
     agent: HttpAgent | null = null;
 
-    constructor(evmHandler: EVMHandler, host: string, is_snap: boolean = false) {
+    constructor(evmHandler: EVMHandlerV5, host: string, is_snap: boolean = false) {
         this.evmHandler = evmHandler
         this.host = host
         this.is_snap = is_snap
@@ -57,29 +57,6 @@ export class AuthHandler {
         return this.agent;
     };
 
-    // async createAgent(
-    //     host: string,
-    //     fetch
-    // ) {
-    //     if (fetch) {
-    //         return await createAgent(host, null, fetch);
-    //     } else {
-    //         return await createAgent(host, null, null);
-    //     }
-    // }
-
-    // async createActor(
-    //     canisterId: string,
-    //     agent,
-    // ) {
-    //     let idlFactory = ({ IDL }) =>
-    //         IDL.Service({
-    //             create_vc_self_presented: IDL.Func([IDL.Text], [IDL.Text], []),
-    //         });
-    //     let actor = createActor(idlFactory, canisterId, agent);
-    //     return actor;
-    // }
-
     // This is used by DApps that want user to save data as VC
     async createSelfPresentedVCModel(
         canisterId: string,
@@ -93,15 +70,17 @@ export class AuthHandler {
             });
         let actor = createActor(idlFactory, canisterId, this.agent);
 
-        let res = ''
+        let res = '';
         try {
-            res = `${await actor.create_vc_self_presented(
-                selfPresentedData,
-            )}`;
+            res =
+                (await actor.create_vc_self_presented(
+                    selfPresentedData,
+                )) as string;
             console.log(`Returned raw self presented VC from canister
   ${res}`);
         } catch (e) {
             console.error(e);
+            throw e;
         }
 
         const vc_proof_pair = res.split("\n");
@@ -119,20 +98,18 @@ export class AuthHandler {
 
         const vc = new VCModel(res, vc_raw, proof, did, data, issuer);
 
-        console.log(vc)
-
         return vc
     };
 
-    async deployVCToEVM(vc: VCModel) {
-        const deployedContract = await this.evmHandler.deployVCContract(
+    async deployVCToEVM(vc: VCModel): Promise<BaseContract> {
+        const deployedContract= await this.evmHandler.deployVCContract(
             vc.did,
             vc.data,
             vc.issuer,
             'SUBJECT',
         )
         console.log(deployedContract)
-        return await deployedContract.getAddress();
+        return deployedContract
     }
 
 

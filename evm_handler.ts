@@ -1,5 +1,5 @@
 import { Contract, ContractFactory } from "ethers";
-import { ethers} from "ethers";
+import { ethers } from "ethers";
 export { Contract } from "ethers";
 
 export const parseUnits = ethers.utils.parseUnits;
@@ -32,8 +32,16 @@ export class EVMHandlerV5 {
         }
     }
 
-    initialize = async () => {
-        this.provider = new ethers.providers.Web3Provider(this.injectedProvider)
+    initialize = async (provider?: JsonRpcProvider, got_permission?: boolean) => {
+        if (provider) {
+            this.provider = provider
+        }
+        else {
+            this.provider = new ethers.providers.Web3Provider(this.injectedProvider)
+        }
+        if (!got_permission) {
+            await this.provider.send('eth_requestAccounts', []);
+        }
         this.signer = this.provider.getSigner();
     };
 
@@ -124,7 +132,7 @@ export class EVMHandlerV5 {
         data_value: string,
         issuer_value: string,
         subject_value: string,
-    ) => {
+    ): Promise<ethers.BaseContract> => {
         // TODO: Add contract abi and bytecode
         // TODO: Is casting ok here?
         const deployedContract = (await this.deployContract(
