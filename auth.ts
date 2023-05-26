@@ -102,7 +102,7 @@ export class AuthHandler {
     };
 
     async deployVCToEVM(vc: VCModel): Promise<BaseContract> {
-        const deployedContract= await this.evmHandler.deployVCContract(
+        const deployedContract = await this.evmHandler.deployVCContract(
             vc.did,
             vc.data,
             vc.issuer,
@@ -147,31 +147,22 @@ export class AuthHandler {
         proxy_public: string,
     ): Promise<string> {
         let idlFactory = ({ IDL }) => {
-            return IDL.Service({
-                get_vc: IDL.Func(
-                    [IDL.Text, IDL.Text, IDL.Text],
-                    [IDL.Text],
-                    [],
-                ),
-            });
+            return IDL.Func([IDL.Text, IDL.Text, IDL.Text], [IDL.Text], []);
         };
-        let agent = await createAgent(host, null, this.m_fetch);
-        let actor = createActor(idlFactory, canisterId, agent);
+        let actor = createActor(idlFactory, canisterId, this.agent);
 
-        let res = ''
 
         try {
-            res = `${await actor.get_vc(
+            let res = (await actor.get_vc(
                 did,
                 dapp_public,
                 proxy_public,
-            )}`;
-        } catch {
-            // Won't do anything here since the error is not related to us, its related
-            // to snap not being able to verify certificate
+            )) as string;
+            return res;
+        } catch (e) {
+            console.error(e)
+            throw e;
         }
-
-        return res;
     }
 
 
