@@ -140,14 +140,15 @@ export class AuthHandler {
 
     // This is used by DApps that only want to ask data to authenticate users
     async askVCFromCanister(
-        host: string,
         canisterId: string,
         did: string,
         dapp_public: string,
         proxy_public: string,
     ): Promise<string> {
         let idlFactory = ({ IDL }) => {
-            return IDL.Func([IDL.Text, IDL.Text, IDL.Text], [IDL.Text], []);
+            return IDL.Service({
+                get_vc: IDL.Func([IDL.Text, IDL.Text, IDL.Text], [IDL.Text], []),
+            });
         };
         let actor = createActor(idlFactory, canisterId, this.agent);
 
