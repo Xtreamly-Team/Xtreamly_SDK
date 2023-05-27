@@ -65,10 +65,11 @@ export class ProxyHandler {
             console.log(`Returned response: ${res}`);
             let [receivedToken, receivedPublicKey] = (res as string).split(",");
             let proxyToken = receivedToken || '';
-            let proxyPublicKey = receivedPublicKey ? `0x${this.proxyPublicKey}` : '';
-            if (this.proxyToken && this.proxyPublicKey) {
-                let proxyAccount = new ProxyAccount(this.proxyToken, this.proxyPublicKey);
+            let proxyPublicKey = receivedPublicKey ? `0x${receivedPublicKey}` : '';
+            if (proxyToken && proxyPublicKey) {
+                let proxyAccount = new ProxyAccount(proxyToken, proxyPublicKey);
                 this.proxyAccounts.set(proxyAccount.token, proxyAccount);
+                console.log(`Returning proxy account ${proxyAccount}`);
                 return proxyAccount;
             }
             return '';
