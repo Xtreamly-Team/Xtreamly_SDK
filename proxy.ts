@@ -14,6 +14,16 @@ export class ProxyAccount {
     }
 }
 
+export class ProxyScript {
+    stage_1: string;
+    stage_2: string;
+
+    constructor(stage_1: string, stage_2: string) {
+        this.stage_1 = stage_1
+        this.stage_2 = stage_2
+    }
+}
+
 export class ProxyHandler {
     proxyAccounts: Map<string, ProxyAccount>;
     host: string = "";
@@ -71,12 +81,11 @@ export class ProxyHandler {
     sendScriptToProxyAccount = async (
         canisterId: string,
         proxyToken: string,
-        stage_1_script: string,
-        stage_2_script: string
+        proxyScript: ProxyScript,
     ) => {
         console.log(`Sending script for ${proxyToken} account token`);
-        console.log(`Stage1: ${stage_1_script}`);
-        console.log(`Stage2: ${stage_2_script}`);
+        console.log(`Stage1: ${proxyScript.stage_1}`);
+        console.log(`Stage2: ${proxyScript.stage_2}`);
         let idlFactory = ({ IDL }) => {
             return IDL.Service({
                 execute_script: IDL.Func(
@@ -91,8 +100,8 @@ export class ProxyHandler {
         try {
             let res = await actor.execute_script(
                 proxyToken,
-                stage_1_script,
-                stage_2_script
+                proxyScript.stage_1,
+                proxyScript.stage_2,
             );
             console.log(`Returned response: ${res}`)
             return res;
