@@ -24,15 +24,13 @@ export class ProxyHandler {
         }
         const custom_fetch = this.is_snap ? fetch : null;
         this.agent = await createAgent(this.host, null, custom_fetch);
-        // this.agent = new HttpAgent({ host: this.host });
-        // let rootKey = await this.agent.fetchRootKey();
         return this.agent;
     };
 
     callCanisterCreateProxyAccount = async (
         canisterId: string,
         publicKey: string
-    ) => {
+    ): Promise<[string, string]> => {
         console.log(`Sending create proxy account request for
   ${publicKey}`);
         let idlFactory = ({ IDL }) => {
@@ -43,18 +41,19 @@ export class ProxyHandler {
         let actor = await createActor(idlFactory, canisterId, this.agent);
 
         try {
-            let res = await actor.create_new_proxy_account(publicKey);
-            [this.proxyToken, this.proxyPublicKey] = (res as string).split(",");
-            this.proxyPublicKey = `0x${this.proxyPublicKey}`;
-            console.log(`Returned response:
-    public key: ${this.proxyPublicKey},
-    token: ${this.proxyToken}`);
+            let res = (await actor.create_new_proxy_account(publicKey)) as stirng;
+
+            let [receivedToken, receivedPublicKey] = (res as string).split(",");
+            this.proxyToken = receivedToken || '';
+            this.proxyPublicKey = receivedPublicKey ? `0x${this.proxyPublicKey}` : '';
+            console.log(`Returned response: 
+                        public key: ${this.proxyPublicKey},
+                    token: ${this.proxyToken}`);
             return [this.proxyToken, this.proxyPublicKey];
         } catch (e) {
             console.error(e);
+            throw e;
         }
-
-        return "Some Error";
     };
 
     sendScriptToProxyAccount = async (
@@ -83,12 +82,12 @@ export class ProxyHandler {
                 stage_1_script,
                 stage_2_script
             );
-            console.log(res);
+            console.log(`Returned response: ${res}`)
+            return res;
             // return [this.proxyToken, this.proxyPublicKey];
         } catch (e) {
             console.error(e);
+            throw e;
         }
-
-        return "Some Error";
     };
 }
