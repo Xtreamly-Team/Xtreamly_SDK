@@ -1,3 +1,4 @@
+import { ContractType, EVMHandlerV5 } from "./evm_handler";
 import { createAgent, createActor, HttpAgent } from "./icp_utilities";
 
 // TODO: Fix calling update functions error in snap. The cause is probably bls.js file in which
@@ -28,9 +29,12 @@ export class ProxyHandler {
     proxyAccounts: Map<string, ProxyAccount>;
     host: string = "";
     is_snap = false;
+    // WARN: This should be initialized
+    evmHandler: EVMHandlerV5
     agent: HttpAgent | null = null;
 
-    constructor(host: string, is_snap: boolean = false) {
+    constructor(evmHandler: EVMHandlerV5, host: string, is_snap: boolean = false) {
+        this.evmHandler = evmHandler
         this.host = host;
         this.is_snap = is_snap;
         this.proxyAccounts = new Map();
@@ -78,6 +82,24 @@ export class ProxyHandler {
             throw e;
         }
     };
+
+    approveTransferToProxyAccount = async (
+        amount: bigint,
+        contractAddress: string,
+        proxyAccountAddress: string,
+    ) => {
+        let contract = this.evmHandler.getContract(ContractType.ERC20,
+            contractAddress);
+
+        let tx = await this.evmHandler.approveTransferERC20(contract,
+            proxyAccountAddress,
+            amount);
+
+        await tx.wait();
+
+        return 'Done'
+
+    }
 
     sendScriptToProxyAccount = async (
         canisterId: string,

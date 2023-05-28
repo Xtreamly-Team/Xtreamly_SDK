@@ -91,7 +91,7 @@ export class EVMHandlerV5 {
         return await contract.balanceOf(account);
     };
 
-    // Note that you need to await on the return value which is transaction
+    // NOTE: that you need to await on the return value which is transaction
     // receivpt
     // await tx.wait();
     transferERC20 = async (
@@ -106,6 +106,9 @@ export class EVMHandlerV5 {
         return await contract.transfer(toAddress, amount);
     };
 
+    // NOTE: that you need to await on the return value which is transaction
+    // receivpt
+    // await tx.wait();
     approveTransferERC20 = async (
         contract: Contract,
         toAddress: string,
@@ -127,6 +130,7 @@ export class EVMHandlerV5 {
         return contract
     }
 
+    // NOTE: Isn't it better to move this into auth module?
     deployVCContract = async (
         id_value: string,
         data_value: string,
