@@ -30,6 +30,9 @@ describe('Test proxy functions', () => {
         expect(res).toEqual('Done')
     }, 20000)
 
+    test.skip('Should execute script correctly', async () => {
+    }, 20000)
+
 })
 
 
