@@ -1,5 +1,8 @@
 import { createActor, createAgent, HttpAgent } from "./icp_utilities";
 import { EVMHandlerV5 } from "./evm_handler";
+import { ethers } from "ethers";
+
+import { VCSmartContractABI, VCSmartContractByteCode } from "./VC_SmartContracter_Bin";
 import { BaseContract } from "ethers";
 
 // TODO: Add proper error handling
@@ -62,8 +65,8 @@ export class AuthHandler {
         canisterId: string,
         selfPresentedData: string,
     ) {
-        console.log(`Sending self presented data to canister
-  ${selfPresentedData}`);
+  //       console.log(`Sending self presented data to canister
+  // ${selfPresentedData}`);
         let idlFactory = ({ IDL }) =>
             IDL.Service({
                 create_vc_self_presented: IDL.Func([IDL.Text], [IDL.Text], []),
@@ -76,8 +79,6 @@ export class AuthHandler {
                 (await actor.create_vc_self_presented(
                     selfPresentedData,
                 )) as string;
-            console.log(`Returned raw self presented VC from canister
-  ${res}`);
         } catch (e) {
             console.error(e);
             throw e;
@@ -102,14 +103,17 @@ export class AuthHandler {
     };
 
     async deployVCToEVM(vc: VCModel): Promise<BaseContract> {
-        const deployedContract = await this.evmHandler.deployVCContract(
-            vc.did,
-            vc.data,
-            vc.issuer,
-            'SUBJECT',
-        )
-        console.log(deployedContract)
-        return deployedContract
+        // TODO: Is casting ok here?
+        const deployedContract = (await this.evmHandler.deployContract(
+            VCSmartContractABI, VCSmartContractByteCode)) as unknown as BaseContract
+
+        const tx = await deployedContract.setData(
+            vc.did, vc.data, vc.issuer, 'SUBJECT'
+        );
+
+        await tx.wait();
+
+        return deployedContract;
     }
 
 
@@ -119,7 +123,7 @@ export class AuthHandler {
         did: string,
         contractAddress: string
     ) {
-        console.log(`Sending deployed vc contract address to canister ${contractAddress} and did: ${did}`);
+        // console.log(`Sending deployed vc contract address to canister ${contractAddress} and did: ${did}`);
         const idlFactory = ({ IDL }) => {
             return IDL.Service({
                 present_did_address: IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], []),
@@ -129,8 +133,8 @@ export class AuthHandler {
         try {
             let res = await actor.present_did_address(did, contractAddress)
 
-            console.log(`Returned inform canister about deployed VC contract
-  ${res}`);
+  //           console.log(`Returned inform canister about deployed VC contract
+  // ${res}`);
             return res
         } catch (e) {
             console.error(e);
@@ -165,46 +169,6 @@ export class AuthHandler {
             throw e;
         }
     }
-
-
-    // initialize = async (): Promise<HttpAgent> => {
-    //   if (this.agent) {
-    //     return this.agent;
-    //   }
-    //   const custom_fetch = this.is_snap ? fetch : null;
-    //   this.agent = await createAgent(this.host, null, custom_fetch);
-    //   // this.agent = new HttpAgent({ host: this.host });
-    //   // let rootKey = await this.agent.fetchRootKey();
-    //   return this.agent;
-    // };
-    //
-    // callCanisterCreateProxyAccount = async (
-    //   canisterId: string,
-    //   publicKey: string
-    // ) => {
-    //   console.log(`Sending create proxy account request for
-    // ${publicKey}`);
-    //   let idlFactory = ({ IDL }) => {
-    //     return IDL.Service({
-    //       create_new_proxy_account: IDL.Func([IDL.Text], [IDL.Text], []),
-    //     });
-    //   };
-    //   let actor = await createActor(idlFactory, canisterId, this.agent);
-    //
-    //   try {
-    //     let res = await actor.create_new_proxy_account(publicKey);
-    //     [this.proxyToken, this.proxyPublicKey] = (res as string).split(",");
-    //     this.proxyPublicKey = `0x${this.proxyPublicKey}`;
-    //     console.log(`Returned response:
-    //   public key: ${this.proxyPublicKey},
-    //   token: ${this.proxyToken}`);
-    //     return [this.proxyToken, this.proxyPublicKey];
-    //   } catch (e) {
-    //     console.error(e);
-    //   }
-    //
-    //   return "Some Error";
-    // };
 
 }
 

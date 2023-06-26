@@ -33,9 +33,9 @@ export class ProxyHandler {
     evmHandler: EVMHandlerV5
     agent: HttpAgent | null = null;
 
-    constructor(evmHandler: EVMHandlerV5, host: string, is_snap: boolean = false) {
+    constructor(evmHandler: EVMHandlerV5, canister_host: string, is_snap: boolean = false) {
         this.evmHandler = evmHandler
-        this.host = host;
+        this.host = canister_host;
         this.is_snap = is_snap;
         this.proxyAccounts = new Map();
     }
@@ -50,7 +50,7 @@ export class ProxyHandler {
         return this.agent;
     };
 
-    callCanisterCreateProxyAccount = async (
+    generateProxyAccount = async (
         canisterId: string,
         publicKey: string
     ): Promise<ProxyAccount | string> => {
@@ -88,16 +88,20 @@ export class ProxyHandler {
         contractAddress: string,
         proxyAccountAddress: string,
     ) => {
-        let contract = this.evmHandler.getContract(ContractType.ERC20,
-            contractAddress);
+        try {
+            let contract = this.evmHandler.getContract(ContractType.ERC20,
+                contractAddress);
 
-        let tx = await this.evmHandler.approveTransferERC20(contract,
-            proxyAccountAddress,
-            amount);
+            let tx = await this.evmHandler.approveTransferERC20(contract,
+                proxyAccountAddress,
+                amount);
 
-        await tx.wait();
+            await tx.wait();
 
-        return 'Done'
+            return 'Done'
+        } catch (e) {
+            return e;
+        }
 
     }
 
