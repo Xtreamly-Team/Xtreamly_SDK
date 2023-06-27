@@ -1,10 +1,8 @@
 import { ContractType, EVMHandlerV5 } from "./evm_handler";
 import { createAgent, createActor, HttpAgent } from "./icp_utilities";
 
-// TODO: Fix calling update functions error in snap. The cause is probably bls.js file in which
-// WebAssembly is used
-// CertificateVerificationError
-//
+// TODO: Add functionality for user to easily top up their proxy account with ETH
+// So that proxy account would be able to transfer.
 
 export class ProxyAccount {
     token: string;
@@ -132,7 +130,6 @@ export class ProxyHandler {
             );
             console.log(`Returned response: ${res}`)
             return res;
-            // return [this.proxyToken, this.proxyPublicKey];
         } catch (e) {
             console.error(e);
             throw e;
