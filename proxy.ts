@@ -104,14 +104,11 @@ export class ProxyHandler {
     }
 
     // TODO: This should be done by the user because proxy account requires ETH to transfer tokens.
-    topUpEthProxyAccount = async (
+    chargeEthProxyAccount = async (
+        proxyAccount: ProxyAccount,
         amount: bigint,
-        contractAddress: string,
-        proxyAccount: ProxyAccount
     ) => {
         try {
-            let contract = this.evmHandler.getContract(ContractType.ERC20,
-                contractAddress);
 
             let tx = await this.evmHandler.transferEth(
                 proxyAccount.address,

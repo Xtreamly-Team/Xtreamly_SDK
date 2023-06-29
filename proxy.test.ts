@@ -26,6 +26,7 @@ describe('Test proxy functions', () => {
         }
     }, 20000)
 
+    // NOTE: This is dependant on previous test
     test('Should approve transaction to proxy account', async () => {
         const res = await proxyHandler.approveTransferToProxyAccount(BigInt(10), USDTContractAddress, proxyAccount.address)
         expect(res).toEqual('Done')
@@ -48,11 +49,23 @@ return "Stage 2 OK"
 
     }, 20000)
 
-    test('Should execute transfering ERC20 to random wallet', async () => {
+    // NOTE: This is dependant on approve transaction test
+    test('Should charge the proxy account', async () => {
+        const currentBalanceEth = await evmHandler.getETHBalance(proxyAccount.address);
 
-        // First need to top up my proxy account
-        const tx = await evmHandler.transferEth(proxyAccount.address, BigInt(10 ** 18));
-        await tx.wait();
+        const chargeRes = await proxyHandler.chargeEthProxyAccount(proxyAccount, BigInt(10 ** 18));
+
+        expect(chargeRes).toEqual('Done');
+
+        const newBalanceEth = await evmHandler.getETHBalance(proxyAccount.address);
+
+        expect(newBalanceEth).toEqual((BigInt(currentBalanceEth) + BigInt(10 ** 18)).toString());
+
+    });
+
+
+    // NOTE: This is dependant on previous test
+    test('Should execute transfering ERC20 to random wallet', async () => {
 
         const randomWallet = await evmHandler.generateWallet();
 

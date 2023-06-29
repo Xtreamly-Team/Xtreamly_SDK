@@ -18,7 +18,7 @@ beforeAll(async () => {
     await authHandler.initialize();
 });
 
-describe.skip('Test auth functions', () => {
+describe('Test auth functions', () => {
     const testSelfPresentedData = 'Test_Data'
     let createdVC: VCModel;
 

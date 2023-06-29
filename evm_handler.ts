@@ -77,8 +77,9 @@ export class EVMHandlerV5 {
         window.ethereum.on("accountsChanged", handleAccountsChanged);
     };
 
+    // NOTE: We return addresses as lower case
     getAccountAddress = async () => {
-        return await this.signer.getAddress();
+        return (await this.signer.getAddress()).toString().toLowerCase();
     };
     getContract(contractType: ContractType, contractAddress: string): Contract {
         let abi = ERC20.abi;

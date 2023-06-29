@@ -8,7 +8,7 @@ beforeAll(async () => {
     await evmHandler.initialize(provider, accessWallet);
 }, 5);
 
-describe.skip('Tests EVM interactions', () => {
+describe('Tests EVM interactions', () => {
 
     test('Should get correct account address and symbol', async () => {
         expect(await evmHandler.getAccountAddress()).toEqual(localWalletPublicKey);
@@ -35,7 +35,7 @@ describe.skip('Tests EVM interactions', () => {
 
     });
 
-    test.only(`Should transfer Eth correctly`, async() => {
+    test(`Should transfer Eth correctly`, async() => {
         const randomWallet = await evmHandler.generateWallet();
 
         const randomAddress = randomWallet.address;
