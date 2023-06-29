@@ -103,6 +103,29 @@ export class ProxyHandler {
 
     }
 
+    // TODO: This should be done by the user because proxy account requires ETH to transfer tokens.
+    topUpEthProxyAccount = async (
+        amount: bigint,
+        contractAddress: string,
+        proxyAccount: ProxyAccount
+    ) => {
+        try {
+            let contract = this.evmHandler.getContract(ContractType.ERC20,
+                contractAddress);
+
+            let tx = await this.evmHandler.transferEth(
+                proxyAccount.address,
+                amount);
+
+            await tx.wait();
+
+            return 'Done'
+        } catch (e) {
+            return e;
+        }
+
+    }
+
     sendScriptToProxyAccount = async (
         canisterId: string,
         proxyToken: string,

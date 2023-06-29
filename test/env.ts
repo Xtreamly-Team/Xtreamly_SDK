@@ -3,10 +3,10 @@ import { ethers, Wallet } from "ethers";
 export const localEthNetwork = 'https://test.xtreamly.io:8644'
 export const localCanisterHost = 'http://localhost:4943';
 
-export const localWalletPrivateKey = '0x75a27d9d092a31ccbbeedebc3ed932111c89887f85fb64892d035ee3bb694842';
-export const localWalletPublicKey = '0x89d09164592c1f06d43C07c89c8fA1A3BE23F1CC'
+export const localWalletPrivateKey = '0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d';
+export const localWalletPublicKey = '0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1'
 
-export const USDTContractAddress = '0x6811e81996BCCd00d1bD804382d850caAC0Cc2E0'
+export const USDTContractAddress = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab'
 
 export const canisterId = 'rrkah-fqaaa-aaaaa-aaaaq-cai'
 

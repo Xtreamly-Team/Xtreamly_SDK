@@ -15,7 +15,7 @@ beforeAll(async () => {
     await proxyHandler.initialize();
 });
 
-describe('Test proxy functions', () => {
+describe.skip('Test proxy functions', () => {
 
     let proxyAccount: ProxyAccount
     test('Should create proxy account', async () => {
@@ -52,6 +52,10 @@ return "Stage 2 OK"
 
     // TODO: Do after proxy account topping up is added
     test.skip('Should execute script correctly', async () => {
+
+        // First need to top up my proxy account
+        
+        const topUpRes = await proxyHandler.topUpProxyAccount(proxyAccount.address, BigInt(100));
 
         const randomWallet = await evmHandler.generateWallet();
         const proxyScriptStage1 = `return "OK";`

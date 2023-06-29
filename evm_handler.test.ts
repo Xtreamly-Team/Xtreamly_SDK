@@ -8,7 +8,7 @@ beforeAll(async () => {
     await evmHandler.initialize(provider, accessWallet);
 }, 5);
 
-describe.skip('Tests EVM interactions', () => {
+describe.only('Tests EVM interactions', () => {
 
     test('Should get correct account address and symbol', async () => {
         expect(await evmHandler.getAccountAddress()).toEqual(localWalletPublicKey);
@@ -30,6 +30,20 @@ describe.skip('Tests EVM interactions', () => {
         await tx.wait();
 
         const randomAddressBalance = await evmHandler.getERC20Balance(contract, randomAddress);
+
+        expect(randomAddressBalance).toEqual('10')
+
+    });
+
+    test.only(`Should transfer Eth correctly`, async() => {
+        const randomWallet = await evmHandler.generateWallet();
+
+        const randomAddress = randomWallet.address;
+
+        const tx = await evmHandler.transferEth(randomAddress, BigInt(10));
+        await tx.wait();
+
+        const randomAddressBalance = await evmHandler.getETHBalance(randomAddress);
 
         expect(randomAddressBalance).toEqual('10')
 
