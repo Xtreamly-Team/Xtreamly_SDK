@@ -15,7 +15,7 @@ beforeAll(async () => {
     await proxyHandler.initialize();
 });
 
-describe.skip('Test proxy functions', () => {
+describe('Test proxy functions', () => {
 
     let proxyAccount: ProxyAccount
     test('Should create proxy account', async () => {
@@ -31,7 +31,7 @@ describe.skip('Test proxy functions', () => {
         expect(res).toEqual('Done')
     }, 20000)
 
-    test.skip('Should execute simplest script correctly', async () => {
+    test('Should execute simplest script correctly', async () => {
 
         console.log(proxyAccount);
 
@@ -46,18 +46,16 @@ return "Stage 2 OK"
 
         const res = await proxyHandler.sendScriptToProxyAccount(canisterId, proxyAccount.token, proxyScript);
 
-        console.log(res);
-
     }, 20000)
 
-    // TODO: Do after proxy account topping up is added
-    test.skip('Should execute script correctly', async () => {
+    test('Should execute transfering ERC20 to random wallet', async () => {
 
         // First need to top up my proxy account
-        
-        const topUpRes = await proxyHandler.topUpProxyAccount(proxyAccount.address, BigInt(100));
+        const tx = await evmHandler.transferEth(proxyAccount.address, BigInt(10 ** 18));
+        await tx.wait();
 
         const randomWallet = await evmHandler.generateWallet();
+
         const proxyScriptStage1 = `return "OK";`
         const proxyScriptStage2 =
             `
@@ -69,13 +67,12 @@ return "Stage 2 OK"
         const proxyScript = new ProxyScript(proxyScriptStage1, proxyScriptStage2);
         const res = await proxyHandler.sendScriptToProxyAccount(canisterId, proxyAccount.token, proxyScript);
 
-        console.log(res);
+        let randomWalletUSDTBalance = await evmHandler.getERC20Balance(evmHandler.getContract(ContractType.ERC20, USDTContractAddress), randomWallet.address)
 
-        const randomWalletBalance = await evmHandler.getERC20Balance(evmHandler.getContract(ContractType.ERC20, USDTContractAddress), randomWallet.address)
+        console.log(randomWallet.address);
+        console.log(randomWalletUSDTBalance);
 
-        console.log(randomWalletBalance);
-
-        expect(randomWalletBalance).toEqual("5");
+        expect(randomWalletUSDTBalance).toEqual("5");
 
     }, 20000)
 

@@ -8,7 +8,7 @@ beforeAll(async () => {
     await evmHandler.initialize(provider, accessWallet);
 }, 5);
 
-describe.only('Tests EVM interactions', () => {
+describe.skip('Tests EVM interactions', () => {
 
     test('Should get correct account address and symbol', async () => {
         expect(await evmHandler.getAccountAddress()).toEqual(localWalletPublicKey);

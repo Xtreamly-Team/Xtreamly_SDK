@@ -102,6 +102,9 @@ export class EVMHandlerV5 {
         return (await this.provider.getBalance(account)).toString();
     };
 
+    // NOTE: that you need to await on the return value which is transaction
+    // receivpt
+    // await tx.wait();
     transferEth = async (toAddress: string, amount: bigint) => {
         console.log(`Transfering ${amount} ETH to ${toAddress}`);
         return await this.signer.sendTransaction({
