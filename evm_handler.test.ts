@@ -1,8 +1,8 @@
-import { ContractType, EVMHandlerV5 } from "./evm_handler";
+import { ContractType, EVMHandler } from "./evm_handler";
 
 import { accessWallet, localWalletPublicKey, provider, USDTContractAddress } from "./test/env";
 
-const evmHandler = new EVMHandlerV5();
+const evmHandler = new EVMHandler();
 
 beforeAll(async () => {
     await evmHandler.initialize(provider, accessWallet);
@@ -59,7 +59,7 @@ describe('Tests EVM interactions', () => {
         const approveTx = await evmHandler.approveTransferERC20(contract, trusteeWallet.address, BigInt(10));
         await approveTx.wait();
 
-        const newHandler = new EVMHandlerV5();
+        const newHandler = new EVMHandler();
 
         await newHandler.initialize(provider, trusteeWallet);
 

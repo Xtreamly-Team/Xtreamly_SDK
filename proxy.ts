@@ -1,4 +1,4 @@
-import { ContractType, EVMHandlerV5 } from "./evm_handler";
+import { ContractType, EVMHandler } from "./evm_handler";
 import { createAgent, createActor, HttpAgent } from "./icp_utilities";
 
 // TODO: Add functionality for user to easily top up their proxy account with ETH
@@ -28,10 +28,10 @@ export class ProxyHandler {
     host: string = "";
     is_snap = false;
     // WARN: This should be initialized
-    evmHandler: EVMHandlerV5
+    evmHandler: EVMHandler
     agent: HttpAgent | null = null;
 
-    constructor(evmHandler: EVMHandlerV5, canister_host: string, is_snap: boolean = false) {
+    constructor(evmHandler: EVMHandler, canister_host: string, is_snap: boolean = false) {
         this.evmHandler = evmHandler
         this.host = canister_host;
         this.is_snap = is_snap;

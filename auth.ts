@@ -1,5 +1,5 @@
 import { createActor, createAgent, HttpAgent } from "./icp_utilities";
-import { EVMHandlerV5 } from "./evm_handler";
+import { EVMHandler } from "./evm_handler";
 import { ethers } from "ethers";
 
 import { VCSmartContractABI, VCSmartContractByteCode } from "./VC_SmartContracter_Bin";
@@ -37,12 +37,12 @@ export class VCModel {
 
 export class AuthHandler {
     // WARN: This should be initialized?
-    evmHandler: EVMHandlerV5
+    evmHandler: EVMHandler
     host: string = "";
     is_snap = false;
     agent: HttpAgent | null = null;
 
-    constructor(evmHandler: EVMHandlerV5, host: string, is_snap: boolean = false) {
+    constructor(evmHandler: EVMHandler, host: string, is_snap: boolean = false) {
         this.evmHandler = evmHandler
         this.host = host
         this.is_snap = is_snap

@@ -1,16 +1,9 @@
-import { ethers, Wallet } from "ethers";
 import { AuthHandler, VCModel } from "./auth";
-import { EVMHandlerV5 } from "./evm_handler";
-import { localCanisterHost, localEthNetwork, localWalletPrivateKey, canisterId } from "./test/env";
+import { EVMHandler } from "./evm_handler";
+import { localCanisterHost, canisterId, provider, accessWallet } from "./test/env";
 
-const provider = new ethers.providers.JsonRpcProvider(localEthNetwork);
-
-const accessWallet = new Wallet(localWalletPrivateKey, provider);
-
-const evmHandler = new EVMHandlerV5();
-const authHandler = new AuthHandler(evmHandler, localCanisterHost, false);
-
-
+const evmHandler = new EVMHandler();
+const authHandler = new AuthHandler(evmHandler, localCanisterHost);
 
 
 beforeAll(async () => {
@@ -40,5 +33,5 @@ describe('Test auth functions', () => {
         const dataFromCanister = await authHandler.askVCFromCanister(canisterId, createdVC.did, '0x', '0x');
 
         expect(dataFromCanister).toEqual(testSelfPresentedData);
-    })
+    }, 20000)
 });

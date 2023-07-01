@@ -23,7 +23,7 @@ export enum ContractType {
 
 
 
-export class EVMHandlerV5 {
+export class EVMHandler {
     provider: Provider;
     signer: Signer;
 
