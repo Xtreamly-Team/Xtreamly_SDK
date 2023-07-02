@@ -31,6 +31,7 @@ export class EVMHandler {
     }
 
     // Pass window.ethereum as injectedProvider when using a metamask
+    // TODO: Revert the get_permission value or change its name to got_permission
     initialize = async (provider?: Provider, signer?: Signer, injectedProvider?: ExternalProvider, get_permission?: boolean) => {
 
         if (provider && signer) {
@@ -39,9 +40,9 @@ export class EVMHandler {
             return;
         }
         if (injectedProvider) {
-            const provider = new ethers.providers.Web3Provider(this.injectedProvider)
+            const provider = new ethers.providers.Web3Provider(injectedProvider)
             this.provider = provider;
-            if (!get_permission) {
+            if (get_permission) {
                 await provider.send('eth_requestAccounts', []);
             }
             this.signer = provider.getSigner();
