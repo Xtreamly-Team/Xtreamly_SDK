@@ -15,6 +15,7 @@ describe('Test auth functions', () => {
     const testSelfPresentedData = 'Test_Data'
     let createdVC: VCModel;
 
+
     // We need 20 seconds since canister is slow to respond
     test(`Should create vc from data`, async () => {
         createdVC = await authHandler.createSelfPresentedVCModel(canisterId, testSelfPresentedData);

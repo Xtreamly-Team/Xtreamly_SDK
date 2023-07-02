@@ -300,6 +300,7 @@ const chargeRes = await proxyHandler.chargeEthProxyAccount(proxyAccount, BigInt(
 ```
 
 * Programming proxy account:
+
 Due to a limitation in RHAI implementation, we can't run scripts that have async functions in one go. That is why you need to supply two set of scripts, called Stage1 and Stage2, to sendScriptToProxyAccount function. Some functions need to be called in Stage1 while others in Stage2. 
 
 The main function that can only be called in stage1 is balance_erc20. For stage2 it would be transfer_from_erc20. Some functions can be called in either stage, Namely among them is print_to_icp which prints a log in ICP container (You won't see the log, but we see). 
