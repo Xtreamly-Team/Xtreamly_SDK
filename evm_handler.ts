@@ -2,7 +2,6 @@ import { Contract, ContractFactory, Signer } from "ethers";
 import { ethers } from "ethers";
 export { Contract } from "ethers";
 
-import { randomBytes } from "crypto";
 export const parseUnits = ethers.utils.parseUnits;
 
 import ERC20 from "./ERC20.json";
@@ -156,12 +155,24 @@ export class EVMHandler {
 
 
     generateWallet = async () => {
-        let id = randomBytes(32).toString('hex');
+        const array = new Uint8Array(32);
+        global.crypto.getRandomValues(array);
+        let id = ""
+        array.forEach((e) => {
+            let converted = Number(e).toString(16)
+            if (converted.length === 1) {
+                converted = '0' + converted
+            }
+
+            id = id + converted
+        })
+        console.log(id);
         let privateKey = "0x" + id;
 
         let wallet = new ethers.Wallet(privateKey);
         return wallet;
     }
+
 
 }
 
