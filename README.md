@@ -210,7 +210,7 @@ await evmHandler.initialize(null, null, window.ethereum);
 
 For both use classes, you need to communicate with Xtreamly backend which currently runs as an [ICP](https://internetcomputer.org/) canister. To do so you'll need to have ICP canister ID as well as ICP network address. For testing purposes use the provided values:
 ```ts
-const testCanisterHost = 'http://localhost:4943'
+const testCanisterHost = 'http://test.xtreamly.io:4942'
 const testCanisterId = 'rrkah-fqaaa-aaaaa-aaaaq-cai'
 ```
 
@@ -367,6 +367,15 @@ Don't forget to give the project a star! Thanks again!
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+All tests are run using jest. You can run them using:
+```sh
+npm run test
+```
+_Replace your package manager in case you don't use npm_
+
+It's highly recommended to run tests before opening pull request. Also add tests for any
+new features in your pull request
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

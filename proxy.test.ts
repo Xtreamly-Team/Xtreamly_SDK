@@ -1,4 +1,4 @@
-import { accessWallet, canisterId, localCanisterHost, provider, USDTContractAddress } from "./test/env";
+import { accessWallet, canisterId, testCanisterHost, provider, USDTContractAddress } from "./test/env";
 
 import { ProxyAccount, ProxyHandler } from "./proxy";
 import { ContractType, EVMHandler } from "./evm_handler";
@@ -6,7 +6,7 @@ import { ProxyScript } from "./proxy";
 
 
 const evmHandler = new EVMHandler();
-const proxyHandler = new ProxyHandler(evmHandler, localCanisterHost);
+const proxyHandler = new ProxyHandler(evmHandler, testCanisterHost);
 
 
 

@@ -1,9 +1,9 @@
 import { AuthHandler, VCModel } from "./auth";
 import { EVMHandler } from "./evm_handler";
-import { localCanisterHost, canisterId, provider, accessWallet } from "./test/env";
+import { testCanisterHost, canisterId, provider, accessWallet } from "./test/env";
 
 const evmHandler = new EVMHandler();
-const authHandler = new AuthHandler(evmHandler, localCanisterHost);
+const authHandler = new AuthHandler(evmHandler, testCanisterHost);
 
 
 beforeAll(async () => {
