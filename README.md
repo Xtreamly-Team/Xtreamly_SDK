@@ -47,7 +47,7 @@
     <br />
     <br />
     <!-- TODO: Add Demo -->
-    <a href="https://github.com/Xtreamly-Team/Xtreamly_SDK">View Demo</a>
+    <a href="https://vimeo.com/842498389">View Demo</a>
     ·
     <a href="https://github.com/Xtreamly-Team/Xtreamly_SDK/issues">Report Bug</a>
     ·
