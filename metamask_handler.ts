@@ -52,10 +52,10 @@ export class MetamaskHandler {
         return res;
     };
 
-    callSnap = async () => {
+    callSnap = async (snapAddress: string, method: string) => {
         const res = await window.ethereum.request({
             method: 'wallet_snap',
-            params: { snapId: 'local:http://localhost:8090', request: { method: 'open' } }
+            params: { snapId: 'local:http://localhost:8090', request: { method: method} }
         });
         return res;
     };
