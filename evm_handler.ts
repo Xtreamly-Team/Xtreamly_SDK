@@ -31,7 +31,7 @@ export class EVMHandler {
 
     // Pass window.ethereum as injectedProvider when using a metamask
     // TODO: Revert the get_permission value or change its name to got_permission
-    initialize = async (provider?: Provider, signer?: Signer, injectedProvider?: ExternalProvider, get_permission?: boolean) => {
+    initialize = async (provider?: Provider, signer?: Signer, injectedProvider?: ExternalProvider) => {
 
         if (provider && signer) {
             this.provider = provider
@@ -41,41 +41,13 @@ export class EVMHandler {
         if (injectedProvider) {
             const provider = new ethers.providers.Web3Provider(injectedProvider)
             this.provider = provider;
-            if (get_permission) {
-                await provider.send('eth_requestAccounts', []);
-            }
             this.signer = provider.getSigner();
         }
 
     };
 
 
-    // TODO: Only for metmask
-    promptMetaMaskChooseWallet = async () => {
-        const permissions = await window.ethereum.request({
-            method: "wallet_requestPermissions",
-            params: [
-                {
-                    eth_accounts: {},
-                },
-            ],
-        });
-        // TODO: Check permissions
 
-        let res = await window.ethereum.request({ method: "eth_requestAccounts" });
-
-        if (res.length === 0) {
-            return "Either metamask is locked or user rejected choosing";
-        } else {
-            return res[0];
-        }
-    };
-
-    setOnMetaMaskWalletChangeHandler = (
-        handleAccountsChanged: (accounts: string[]) => void
-    ) => {
-        window.ethereum.on("accountsChanged", handleAccountsChanged);
-    };
 
     // NOTE: We return addresses as lower case
     getAccountAddress = async () => {

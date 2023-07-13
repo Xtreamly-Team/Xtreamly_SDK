@@ -36,7 +36,6 @@ export class VCModel {
 }
 
 export class AuthHandler {
-    // WARN: This should be initialized?
     evmHandler: EVMHandler
     host: string = "";
     is_snap = false;
